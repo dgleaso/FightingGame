@@ -13,19 +13,13 @@ class Player {
 		Player(AnimatedSprite playerSprite, sf::Vector2f startPos, sf::Texture* sheetTexture);
 		~Player();
 		void update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump);
-		Animation getCurrentAnimation();
 		AnimatedSprite getSprite();
-		//sf::Vector2f getCurrentPosition();
 
 	private:
 		AnimatedSprite playerSprite;
-		//sf::Texture* playTexture;
-		//std::queue <sf::Texture> textureQueue;
-		sf::Vector2f getRectPos(sf::RectangleShape rect);
-		float getRectX(sf::RectangleShape rect);
-		float getRectY(sf::RectangleShape rect);
-		bool isGrounded(sf::RectangleShape player);
-		bool isGroundedNew();
+		bool isGrounded();
+		float xSpeed;
+		float ySpeed;
 		void movePlayer(float xSpeed, float ySpeed);
 		//Animations
 		Animation walkLeft;

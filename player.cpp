@@ -10,31 +10,16 @@
 
 #include<iostream>
 
-//Needed new names??? !!!
-bool qfacingRight = true;
-bool qisMoving = false;
-//sf::RectangleShape playerRect(sf::Vector2f(30, 60));
-//AnimatedSprite playerSprite(sf::seconds(0.2), true, false);
-
-
-float ySpeed = 0;
-float xSpeed = 0;
-
-//float xPos;
-//float yPos;
+bool facingRight = true;
 
 
 //Constr/Destr
 Player::Player(AnimatedSprite playerSprite, sf::Vector2f startPos, sf::Texture* sheetTexture){
 	this->playerSprite = playerSprite;
-	//playerRect.setPosition(startPos);
-	//xPos = startPos.x;
-	//yPos = startPos.y;
-	//this->playerSprite.setPosition(startPos);
+	ySpeed = 0;
+	xSpeed = 0;
 
 	//ANIMATION TEXTURE STUFF
-	
-
 	this->walkLeft.setSpriteSheet(*sheetTexture);
 	this->walkLeft.addFrame(sf::IntRect(60, 0, 35, 60));
 	this->walkLeft.addFrame(sf::IntRect(92, 0, 37, 60));
@@ -62,31 +47,8 @@ Player::~Player(){
 }
 
 //Private
-//
-sf::Vector2f Player::getRectPos(sf::RectangleShape rect){
-	sf::Vector2f rectP = rect.getPosition();
-	return rectP;
-}
-float Player::getRectX(sf::RectangleShape rect){
-	return Player::getRectPos(rect).x;
-}
-float Player::getRectY(sf::RectangleShape rect){
-	return Player::getRectPos(rect).y;
-}
-bool Player::isGrounded(sf::RectangleShape player){
-	sf::RectangleShape floor = sCollisionUnits.getFloor();
-	//Gets the vertical position of the player
-	float yPlayer = getRectY(player);
-	float yFloor = getRectY(floor);
 
-	if(yPlayer >= yFloor - 60){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-bool Player::isGroundedNew(){
+bool Player::isGrounded(){
 	sf::RectangleShape floor = sCollisionUnits.getFloor();
 	//Gets the vertical position of the player
 	float yPlayer = this->playerSprite.getPosition().y;
@@ -106,26 +68,22 @@ void Player::movePlayer(float xSpeed, float ySpeed){
 		float x = playerSprite.getPosition().x;
 		float y = playerSprite.getPosition().y;
 		if(ySpeed > 0){
-			if(!isGroundedNew()){
-				//playerRect.move(0.f, ySpeed);	
+			if(!isGrounded()){
 				this->playerSprite.move(0.f, ySpeed);	
 			}
 		
 		}else{
 			//Moves player up (if jumping)
-			//playerRect.move(0.f, ySpeed);	
 			this->playerSprite.move(0.f, ySpeed);	
 		}
 		if(xSpeed > 0){
 		//Moving right
 			if(x < maxWidth){
-				//playerRect.move(xSpeed, 0.f);	
 				this->playerSprite.move(xSpeed, 0.f);	
 			}
 		}else{
 		//Moving left
 			if(x > 0){
-				//playerRect.move(xSpeed, 0.f);	
 				this->playerSprite.move(xSpeed, 0.f);	
 			}
 		}
@@ -138,12 +96,10 @@ void Player::movePlayer(float xSpeed, float ySpeed){
 void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump){
 	bool inAir = false;
 	//If on ground
-	if(isGroundedNew()){
+	if(isGrounded()){
 		//Handles jump
 		if(jump){
 			ySpeed = -6.0;
-			//Need to move player now?  I dont think so
-			
 			//Used for selecting animation
 			inAir = true;
 		}
@@ -156,7 +112,7 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 	}
 	//
 	if(moveRight and !moveLeft){
-		qfacingRight = true;
+		facingRight = true;
 		xSpeed = 1.0; 	
 		if(inAir){
 			this->currentAnimation = &jumpRight;
@@ -164,7 +120,7 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 			this->currentAnimation = &walkRight;
 		}
 	}else if(moveLeft){
-		qfacingRight = false;
+		facingRight = false;
 		xSpeed = -1.0; 	
 		if(inAir){
 			this->currentAnimation = &jumpLeft;
@@ -173,7 +129,7 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 		}
 	}else{
 		xSpeed = 0;
-		if(qfacingRight){
+		if(facingRight){
 			if(inAir){
 				this->currentAnimation = &jumpRight;
 			}else{
@@ -188,25 +144,15 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 		}
 	}
 
-	//std::cout << "Xspeed: " << xSpeed << " Yspeed: " << ySpeed << "\n";
+	//Updates the animation frame
 	(this->playerSprite).play(*currentAnimation);
 	(this->playerSprite).update(frameTime);
 	
+	//Moves the player
 	Player::movePlayer(xSpeed, ySpeed);
-
-	//sCollisionUnits.printNum();
 }
 
-//Returns the current Animation of the player
-Animation Player::getCurrentAnimation(){
-	return *this->currentAnimation;
-}
+//Returns sprite  (to game for drawing)
 AnimatedSprite Player::getSprite(){
 	return this->playerSprite;	
 }
-
-//Returns the current position of the player
-//sf::Vector2f Player::getCurrentPosition(){
-//	sf::Vector2f v(xPos, yPos);	
-//	return v;
-//}

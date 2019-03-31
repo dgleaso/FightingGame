@@ -18,10 +18,6 @@ class Game {
 	private:
 	        Game();
 		~Game();
-		sf::Vector2f getRectPos(sf::RectangleShape rect);
-		int getRectX(sf::RectangleShape rect);
-		int getRectY(sf::RectangleShape rect);
-		bool isGrounded(sf::RectangleShape player, sf::RectangleShape floor);
 };
 
 #define hGame Game::instance()

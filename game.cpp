@@ -77,6 +77,7 @@ int Game::Update(){
 	}
 
 	//ANIMATIONS _______________________-
+	/*
 	Animation walkLeft;
 	walkLeft.setSpriteSheet(sheetTexture);
 	walkLeft.addFrame(sf::IntRect(60, 0, 35, 60));
@@ -106,6 +107,7 @@ int Game::Update(){
 
 
 	Animation* currentAnimation = &walkLeft;
+	*/
 
 	//ANIMATIONS _______________________-
 	
@@ -116,22 +118,28 @@ int Game::Update(){
 	ps.setPosition(startingPos);
 	Player player(ps, startingPos, &sheetTexture);
 
+	//FOr animated sprite
+	AnimatedSprite pSTwo(sf::seconds(0.2), true, false);
+
 	//std::cout << player.getCurrentPosition().x;
 
 
 
 	// set up AnimatedSprite
+	/*
 	sf::RectangleShape playerRect(sf::Vector2f(30, 60));
 	playerRect.setPosition(sf::Vector2f(300, 300));
 	AnimatedSprite playerSprite(sf::seconds(0.2), true, false);
 	playerSprite.setPosition(sf::Vector2f(300, 300));
 
-	AnimatedSprite pSTwo(sf::seconds(0.2), true, false);
+	*/
 	
 	//ANIMATION TEXTURE STUFF
 	
+	/*
 	sCollisionUnits.setNum(3);
 	sCollisionUnits.printNum();
+	*/
 
 
 	//Create Objects
@@ -155,8 +163,8 @@ int Game::Update(){
 		isMoving = false;
 
 		//Player Position
-		int xPlayer = getRectX(playerRect);
-		int yPlayer = getRectY(playerRect);
+		//int xPlayer = getRectX(playerRect);
+		//int yPlayer = getRectY(playerRect);
 
 
 		//Keyboard input for closing
@@ -176,7 +184,8 @@ int Game::Update(){
 			moveRight = true;
 			isMoving = true;
 			facingRight = true;
-			currentAnimation = &walkRight;
+			/*
+			//currentAnimation = &walkRight;
 			for(int i = 0; i < 5; i++){
 				xPlayer = getRectX(playerRect);
 				if(xPlayer < windowWidth - 30){
@@ -184,12 +193,14 @@ int Game::Update(){
 					playerRect.move(1.f, 0.f);
 				}
 			}
+			*/
 		}
 		//Moving left
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			moveLeft = true;
 			isMoving = true;
 			facingRight = false;
+			/*
 			currentAnimation = &walkLeft;
 			for(int i = 0; i < 5; i++){
 			xPlayer = getRectX(playerRect);
@@ -198,15 +209,18 @@ int Game::Update(){
 					playerSprite.move(-1.f, 0.f);
 				}
 			}
+			*/
 		}
 		//Jumping
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 			jump = true;
+			/*
 			if(isGrounded(playerRect, floor)){
 				vSpeed = -6.0;
 				playerSprite.move(0.f, vSpeed);
 				playerRect.move(0.f, vSpeed);
 			}
+			*/
 		}
 
 		/*
@@ -218,6 +232,7 @@ int Game::Update(){
 		}
 		*/ 
 		//Gravity
+		/*
 		if(!isGrounded(playerRect, floor)){
 			vSpeed += 0.5;
 			if(facingRight){
@@ -241,6 +256,7 @@ int Game::Update(){
 			}
 		
 		}
+		*/
 
 		/*
 		if(isShot){

@@ -10,14 +10,22 @@
 
 #include<iostream>
 
-bool facingRight = true;
-
 
 //Constr/Destr
-Player::Player(AnimatedSprite playerSprite, sf::Vector2f startPos, sf::Texture* sheetTexture){
+Player::Player(int playerNum, AnimatedSprite playerSprite, sf::Vector2f startPos, sf::Texture* sheetTexture){
 	this->playerSprite = playerSprite;
+	this->playerNum = playerNum;
+
+	if(playerNum == 1){
+		sCollisionUnits.setPlayerOne(&playerSprite);
+	}else{
+		sCollisionUnits.setPlayerTwo(&playerSprite);
+	}
+
 	ySpeed = 0;
 	xSpeed = 0;
+
+	facingRight = playerNum;
 
 	//ANIMATION TEXTURE STUFF
 	this->walkLeft.setSpriteSheet(*sheetTexture);
@@ -64,6 +72,12 @@ bool Player::isGrounded(){
 // Moves the player rectangle
 void Player::movePlayer(float xSpeed, float ySpeed){
 	float maxWidth = sCollisionUnits.getWidth();
+	AnimatedSprite otherPlayer;
+	if(this->playerNum == 1){
+		otherPlayer = *(sCollisionUnits.getPlayerOne());
+	}else{
+		otherPlayer = *(sCollisionUnits.getPlayerTwo());
+	}
 	for(int i = 0; i < 5; i++){
 		float x = playerSprite.getPosition().x;
 		float y = playerSprite.getPosition().y;
@@ -78,7 +92,7 @@ void Player::movePlayer(float xSpeed, float ySpeed){
 		}
 		if(xSpeed > 0){
 		//Moving right
-			if(x < maxWidth){
+			if(x < maxWidth - 30){
 				this->playerSprite.move(xSpeed, 0.f);	
 			}
 		}else{
@@ -112,7 +126,7 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 	}
 	//
 	if(moveRight and !moveLeft){
-		facingRight = true;
+		facingRight = 1;
 		xSpeed = 1.0; 	
 		if(inAir){
 			this->currentAnimation = &jumpRight;
@@ -120,7 +134,7 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 			this->currentAnimation = &walkRight;
 		}
 	}else if(moveLeft){
-		facingRight = false;
+		facingRight = 0;
 		xSpeed = -1.0; 	
 		if(inAir){
 			this->currentAnimation = &jumpLeft;
@@ -129,7 +143,7 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 		}
 	}else{
 		xSpeed = 0;
-		if(facingRight){
+		if(facingRight == 1){
 			if(inAir){
 				this->currentAnimation = &jumpRight;
 			}else{

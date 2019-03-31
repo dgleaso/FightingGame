@@ -6,26 +6,30 @@
 
 #include <queue>
 
+#include "AnimatedSprite.h"
 
 class CollisionUnits {
 	private:
 	        CollisionUnits();
 		~CollisionUnits();
-		int num;
 		std::queue <sf::RectangleShape> floorQueue;
 		float screenWidth;
+		AnimatedSprite* playerOne;
+		AnimatedSprite* playerTwo;
 	public:
 		static CollisionUnits& instance() {
 			static CollisionUnits collisionUnits;
 			return collisionUnits;
 		}
 
-		void printNum();
-		void setNum(int num);
 		void setFloor(sf::RectangleShape floor);
 		sf::RectangleShape getFloor();
 		void setWidth(float screenWidth);
 		float getWidth();
+		AnimatedSprite* getPlayerOne();
+		AnimatedSprite* getPlayerTwo();
+		void setPlayerOne(AnimatedSprite* sprite);
+		void setPlayerTwo(AnimatedSprite* sprite);
 
 };
 #define sCollisionUnits CollisionUnits::instance()

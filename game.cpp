@@ -52,10 +52,15 @@ int Game::Update(){
 	
 	//Creates Player Object
 	AnimatedSprite ps(sf::seconds(0.2), true, false);
-	sf::Vector2f startingPos(100, 100);
+	sf::Vector2f startingPos(120, 100);
 	ps.setPosition(startingPos);
-	Player player(ps, startingPos, &sheetTexture);
+	Player player(1, ps, startingPos, &sheetTexture);
 
+	//Player 2
+	AnimatedSprite pst(sf::seconds(0.2), true, false);
+	sf::Vector2f startingPosT(440, 100);
+	pst.setPosition(startingPosT);
+	Player playerT(0,pst, startingPos, &sheetTexture);
 
 
 	//Create Floor (and adds to collision units)
@@ -73,9 +78,12 @@ int Game::Update(){
 
 	while (window.isOpen()) {
 		//To be used for player movement (in player update)
-		bool moveRight = false;
-		bool moveLeft = false;
-		bool jump = false;
+		bool oneMoveRight = false;
+		bool oneMoveLeft = false;
+		bool oneJump = false;
+		bool twoMoveRight = false;
+		bool twoMoveLeft = false;
+		bool twoJump = false;
 
 		sf::Time frameTime = frameClock.restart();
 
@@ -91,17 +99,25 @@ int Game::Update(){
 				window.close();
 		}
 
-		//Moving right
+		//Player One Controls
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			moveRight = true;
+			oneMoveRight = true;
 		}
-		//Moving left
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			moveLeft = true;
+			oneMoveLeft = true;
 		}
-		//Jumping
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-			jump = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			oneJump = true;
+		}
+		//Player Two Controls
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+			twoMoveRight= true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+			twoMoveLeft = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+			twoJump = true;
 		}
 
 		/*
@@ -113,7 +129,8 @@ int Game::Update(){
 		}
 		*/ 
 
-		player.update(frameTime, moveRight, moveLeft, jump);
+		player.update(frameTime, oneMoveRight, oneMoveLeft, oneJump);
+		playerT.update(frameTime, twoMoveRight, twoMoveLeft, twoJump);
 
 
 		//Makes background color white
@@ -122,6 +139,7 @@ int Game::Update(){
 		//window.clear();
 
 		window.draw(player.getSprite());
+		window.draw(playerT.getSprite());
 
 		/*
 		if(isShot){

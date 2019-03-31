@@ -1,6 +1,7 @@
 #include "collisionUnits.h"
 #include<iostream>
 #include <queue>
+#include "AnimatedSprite.h"
 
 //Projectiles with queue 
 //
@@ -16,7 +17,6 @@
 //enemy attack
 
 CollisionUnits::CollisionUnits(){
-	this->num = 0;
 	this->screenWidth = 0.0;
 }
 
@@ -32,9 +32,6 @@ sf::RectangleShape CollisionUnits::getFloor(){
 	return floorQueue.front();
 }
 
-void CollisionUnits::setNum(int num){
-	this->num = num;
-}
 
 void CollisionUnits::setWidth(float screenWidth){
 	this->screenWidth = screenWidth;
@@ -43,8 +40,16 @@ void CollisionUnits::setWidth(float screenWidth){
 float CollisionUnits::getWidth(){
 	return this->screenWidth;
 }
+AnimatedSprite* CollisionUnits::getPlayerOne(){
+	return this->playerOne;
 
-void CollisionUnits::printNum(){
-	//std::cout << this->num;
-	//std::cout << '\n';
+}
+AnimatedSprite* CollisionUnits::getPlayerTwo(){
+	return this->playerTwo;
+}
+void CollisionUnits::setPlayerOne(AnimatedSprite* sprite){
+	this->playerOne = sprite;
+}
+void CollisionUnits::setPlayerTwo(AnimatedSprite* sprite){
+	this->playerTwo = sprite;
 }

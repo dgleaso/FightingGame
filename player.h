@@ -10,13 +10,15 @@
 
 class Player {
 	public:
-		Player(AnimatedSprite playerSprite, sf::Vector2f startPos, sf::Texture* sheetTexture);
+		Player(int playerNum, AnimatedSprite playerSprite, sf::Vector2f startPos, sf::Texture* sheetTexture);
 		~Player();
 		void update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump);
 		AnimatedSprite getSprite();
 
 	private:
 		AnimatedSprite playerSprite;
+		int playerNum;
+		int facingRight;
 		bool isGrounded();
 		float xSpeed;
 		float ySpeed;

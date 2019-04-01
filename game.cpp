@@ -61,6 +61,7 @@ int Game::Update(){
 	}
 
 	//Creates a projectile and an axe
+	/*
 	AnimatedSprite tSprite(sf::seconds(0.08), true, false);
 	Projectile tProj(tSprite, &throwTexture);
 
@@ -69,20 +70,21 @@ int Game::Update(){
 
 	//tProj.flip();
 
+	*/
 	//done proj/axe
 
 	
 	//Creates Player Object
-	AnimatedSprite ps(sf::seconds(0.2), true, false);
+	AnimatedSprite playerOneSprite(sf::seconds(0.2), true, false);
 	sf::Vector2f startingPos(120, 100);
-	ps.setPosition(startingPos);
-	Player player(1, ps, startingPos, &sheetTexture);
+	playerOneSprite.setPosition(startingPos);
+	Player playerOne(1, playerOneSprite, &sheetTexture, &throwTexture);
 
 	//Player 2
-	AnimatedSprite pst(sf::seconds(0.2), true, false);
+	AnimatedSprite playerTwoSprite(sf::seconds(0.2), true, false);
 	sf::Vector2f startingPosT(440, 100);
-	pst.setPosition(startingPosT);
-	Player playerT(0,pst, startingPos, &sheetTexture);
+	playerTwoSprite.setPosition(startingPosT);
+	Player playerTwo(0, playerTwoSprite, &sheetTexture, &throwTexture);
 
 
 
@@ -108,6 +110,9 @@ int Game::Update(){
 		bool twoMoveLeft = false;
 		bool twoJump = false;
 
+		bool oneThrow = false;
+		bool twoThrow = false;
+
 		sf::Time frameTime = frameClock.restart();
 
 		//Keyboard input for closing
@@ -132,6 +137,9 @@ int Game::Update(){
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 			oneJump = true;
 		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+			oneThrow = true;
+		}
 		//Player Two Controls
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 			twoMoveRight= true;
@@ -141,6 +149,9 @@ int Game::Update(){
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 			twoJump = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) {
+			twoThrow = true;
 		}
 
 		/*
@@ -152,13 +163,15 @@ int Game::Update(){
 		}
 		*/ 
 
-		player.update(frameTime, oneMoveRight, oneMoveLeft, oneJump);
-		playerT.update(frameTime, twoMoveRight, twoMoveLeft, twoJump);
+		playerOne.update(frameTime, oneMoveRight, oneMoveLeft, oneJump, oneThrow);
+		playerTwo.update(frameTime, twoMoveRight, twoMoveLeft, twoJump, twoThrow);
 
 
 		//Updates throw/axe
+		/*
 		tProj.update(frameTime);
 		axe.update(frameTime);
+		*/
 
 
 		//Makes background color white
@@ -169,12 +182,14 @@ int Game::Update(){
 		//std::cout << sCollisionUnits.getPlayerOne() << '\n';
 		//std::cout << sCollisionUnits.getPlayerTwo() << '\n';
 
-		window.draw(player.getSprite());
-		window.draw(playerT.getSprite());
+		window.draw(playerOne.getSprite());
+		window.draw(playerTwo.getSprite());
 
 		//Draws throw/axe
+		/*
 		window.draw(tProj.getSprite());
 		window.draw(axe.getSprite());
+		*/
 
 		/*
 		if(isShot){

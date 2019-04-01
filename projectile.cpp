@@ -10,10 +10,12 @@
 
 #include<iostream>
 
-Projectile::Projectile(AnimatedSprite throwSprite, sf::Texture* throwSheet){
+Projectile::Projectile(int playerNum, AnimatedSprite throwSprite, sf::Texture* throwSheet){
 	this->throwSprite = throwSprite;
 
 	this->throwSprite.setPosition(300, 200);
+
+	this->playerNum = playerNum;
 
 
 	this->throwAnimation.setSpriteSheet(*throwSheet);

@@ -1,6 +1,8 @@
 #include "player.h"
 
 #include "collisionUnits.h"
+#include "projectile.h"
+#include "axe.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -12,10 +14,13 @@
 
 
 //Constr/Destr
-Player::Player(int playerNum, AnimatedSprite playerSprite, sf::Vector2f startPos, sf::Texture* sheetTexture){
+Player::Player(int playerNum, AnimatedSprite playerSprite, 
+sf::Texture* sheetTexture, 
+sf::Texture* throwTexture){
 	this->playerSprite = playerSprite;
 	this->playerNum = playerNum;
 
+	this->hasThrown = false;
 	
 	if(playerNum == 1){
 		sCollisionUnits.setPlayerOne(&this->playerSprite);
@@ -155,7 +160,7 @@ void Player::movePlayer(){
 //Public
 
 //Updates position and this->currentAnimation based on state
-void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump){
+void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump, bool throwB){
 	bool inAir = false;
 	//If on ground
 	if(isGrounded()){
@@ -212,6 +217,11 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 	
 	//Moves the player
 	Player::movePlayer();
+}
+
+//Creates a projectile
+void Player::createThrow(){
+
 }
 
 //Returns sprite  (to game for drawing)

@@ -10,7 +10,7 @@
 
 class Projectile {
 	public:
-		Projectile(AnimatedSprite throwSprite, sf::Texture* throwSheet);
+		Projectile(int playerNum, AnimatedSprite throwSprite, sf::Texture* throwSheet);
 		~Projectile();
 		void update(sf::Time frameTime);
 		void flip();
@@ -22,5 +22,7 @@ class Projectile {
 		Animation throwAnimation;
 
 		Animation* currentAnimation;
+
+		int playerNum;
 };
 #endif

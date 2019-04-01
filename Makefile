@@ -8,5 +8,5 @@ CC := g++
 %.o: %.h
 	$(CC) -c $< -o $@
 
-HammerMercenary: main.o game.o AnimatedSprite.o Animation.o player.o collisionUnits.o
-	$(CC) main.o game.o AnimatedSprite.o Animation.o player.o collisionUnits.o -o HammerMercenary $(LIBS)
+HammerMercenary: main.o game.o AnimatedSprite.o Animation.o player.o collisionUnits.o projectile.o axe.o
+	$(CC) main.o game.o AnimatedSprite.o Animation.o player.o collisionUnits.o projectile.o axe.o -o HammerMercenary $(LIBS)

@@ -1,6 +1,8 @@
 #include "game.h"
 #include "player.h"
 #include "collisionUnits.h"
+#include "projectile.h"
+#include "axe.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -47,7 +49,27 @@ int Game::Update(){
 		std::cout << "Failed to load player spritesheet!" << std::endl;
 		return 1;
 	}
+	sf::Texture throwTexture;
+	if (!throwTexture.loadFromFile("images/throwSheet.png")) {
+		std::cout << "Failed to load player spritesheet!" << std::endl;
+		return 1;
+	}
+	sf::Texture axeTexture;
+	if (!axeTexture.loadFromFile("images/axeSheet.png")) {
+		std::cout << "Failed to load player spritesheet!" << std::endl;
+		return 1;
+	}
 
+	//Creates a projectile and an axe
+	AnimatedSprite tSprite(sf::seconds(0.08), true, false);
+	Projectile tProj(tSprite, &throwTexture);
+
+	AnimatedSprite aSprite(sf::seconds(0.4), true, false);
+	Axe axe(tSprite, &axeTexture);
+
+	//tProj.flip();
+
+	//done proj/axe
 
 	
 	//Creates Player Object
@@ -134,6 +156,11 @@ int Game::Update(){
 		playerT.update(frameTime, twoMoveRight, twoMoveLeft, twoJump);
 
 
+		//Updates throw/axe
+		tProj.update(frameTime);
+		axe.update(frameTime);
+
+
 		//Makes background color white
 		sf::Color c(255, 255, 255);
 		window.clear(c);
@@ -144,6 +171,10 @@ int Game::Update(){
 
 		window.draw(player.getSprite());
 		window.draw(playerT.getSprite());
+
+		//Draws throw/axe
+		window.draw(tProj.getSprite());
+		window.draw(axe.getSprite());
 
 		/*
 		if(isShot){

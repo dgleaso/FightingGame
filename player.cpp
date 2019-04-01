@@ -16,10 +16,11 @@ Player::Player(int playerNum, AnimatedSprite playerSprite, sf::Vector2f startPos
 	this->playerSprite = playerSprite;
 	this->playerNum = playerNum;
 
+	
 	if(playerNum == 1){
-		sCollisionUnits.setPlayerOne(&playerSprite);
+		sCollisionUnits.setPlayerOne(&this->playerSprite);
 	}else{
-		sCollisionUnits.setPlayerTwo(&playerSprite);
+		sCollisionUnits.setPlayerTwo(&this->playerSprite);
 	}
 
 	ySpeed = 0;
@@ -29,24 +30,24 @@ Player::Player(int playerNum, AnimatedSprite playerSprite, sf::Vector2f startPos
 
 	//ANIMATION TEXTURE STUFF
 	this->walkLeft.setSpriteSheet(*sheetTexture);
-	this->walkLeft.addFrame(sf::IntRect(60, 0, 35, 60));
-	this->walkLeft.addFrame(sf::IntRect(92, 0, 37, 60));
+	this->walkLeft.addFrame(sf::IntRect(60, 0, 33, 60));
+	this->walkLeft.addFrame(sf::IntRect(92, 0, 33, 60));
 
 	this->walkRight.setSpriteSheet(*sheetTexture);
-	this->walkRight.addFrame(sf::IntRect(0, 62, 30, 120));
-	this->walkRight.addFrame(sf::IntRect(30, 62, 60, 120));
+	this->walkRight.addFrame(sf::IntRect(0, 62, 33, 60));
+	this->walkRight.addFrame(sf::IntRect(30, 62, 33, 60));
 
 	this->jumpRight.setSpriteSheet(*sheetTexture);
-	this->jumpRight.addFrame(sf::IntRect(30, 0, 40, 60));
+	this->jumpRight.addFrame(sf::IntRect(30, 0, 33, 60));
 
 	this->jumpLeft.setSpriteSheet(*sheetTexture);
-	this->jumpLeft.addFrame(sf::IntRect(0, 0, 30, 60));
+	this->jumpLeft.addFrame(sf::IntRect(0, 0, 33, 60));
 
 	this->standLeft.setSpriteSheet(*sheetTexture);
-	this->standLeft.addFrame(sf::IntRect(92, 0, 37, 60));
+	this->standLeft.addFrame(sf::IntRect(92, 0, 33, 60));
 
 	this->standRight.setSpriteSheet(*sheetTexture);
-	this->standRight.addFrame(sf::IntRect(30, 63, 35, 65));
+	this->standRight.addFrame(sf::IntRect(30, 63, 33, 60));
 
 }
 
@@ -72,18 +73,42 @@ bool Player::isGrounded(){
 // Moves the player rectangle
 void Player::movePlayer(float xSpeed, float ySpeed){
 	float maxWidth = sCollisionUnits.getWidth();
-	AnimatedSprite otherPlayer;
-	if(this->playerNum == 1){
-		otherPlayer = *(sCollisionUnits.getPlayerOne());
-	}else{
-		otherPlayer = *(sCollisionUnits.getPlayerTwo());
-	}
 	for(int i = 0; i < 5; i++){
-		float x = playerSprite.getPosition().x;
-		float y = playerSprite.getPosition().y;
+		AnimatedSprite enemy;
+		if(this->playerNum == 0){
+			enemy = *(sCollisionUnits.getPlayerOne());
+		}else{
+			enemy = *(sCollisionUnits.getPlayerTwo());
+		}
+
+		//Player Hitbox
+		float playerLeft = playerSprite.getPosition().x;
+		float playerRight = playerLeft + 33;
+		float playerTop = playerSprite.getPosition().y;
+		float playerBottom = playerTop + 60;
+
+		//Enemy Hitbox  (other player)
+
+		float enemyLeft = enemy.getPosition().x;
+		float enemyRight = enemyLeft + 33;
+		float enemyTop = enemy.getPosition().y;
+		float enemyBottom = enemyTop + 60;
+		
+
+
+
 		if(ySpeed > 0){
 			if(!isGrounded()){
-				this->playerSprite.move(0.f, ySpeed);	
+				if(playerRight < enemyLeft or playerLeft > enemyRight){
+					this->playerSprite.move(0.f, ySpeed);	
+				}else{
+					if(playerBottom < enemyTop or playerTop > enemyBottom){
+						this->playerSprite.move(0.f, ySpeed);	
+					}else{
+						
+						this->playerSprite.move(0.f, -45);	
+					}
+				}
 			}
 		
 		}else{
@@ -91,13 +116,28 @@ void Player::movePlayer(float xSpeed, float ySpeed){
 			this->playerSprite.move(0.f, ySpeed);	
 		}
 		if(xSpeed > 0){
+			if(this->playerNum == 1){
+				//std::cout << "opl" << oPLeft <<"\n";
+			}
 		//Moving right
-			if(x < maxWidth - 30){
+			if(playerRight < maxWidth and 
+			(playerRight < enemyLeft or 
+			playerLeft >= enemyRight or
+			playerTop > enemyBottom or
+			playerBottom < enemyTop
+			)
+			){
 				this->playerSprite.move(xSpeed, 0.f);	
 			}
 		}else{
 		//Moving left
-			if(x > 0){
+			if(playerLeft > 0 and
+			(playerLeft > enemyRight or
+			playerRight <= enemyLeft or
+			playerTop > enemyBottom or
+			playerBottom < enemyTop
+			)
+			){
 				this->playerSprite.move(xSpeed, 0.f);	
 			}
 		}

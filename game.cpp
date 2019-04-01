@@ -63,6 +63,7 @@ int Game::Update(){
 	Player playerT(0,pst, startingPos, &sheetTexture);
 
 
+
 	//Create Floor (and adds to collision units)
 	sf::RectangleShape floor(sf::Vector2f(windowWidth, 20));
 	floor.setPosition(0.f, windowHeight - 20.f);
@@ -137,6 +138,9 @@ int Game::Update(){
 		sf::Color c(255, 255, 255);
 		window.clear(c);
 		//window.clear();
+		//
+		//std::cout << sCollisionUnits.getPlayerOne() << '\n';
+		//std::cout << sCollisionUnits.getPlayerTwo() << '\n';
 
 		window.draw(player.getSprite());
 		window.draw(playerT.getSprite());

@@ -23,8 +23,8 @@ Player::Player(int playerNum, AnimatedSprite playerSprite, sf::Vector2f startPos
 		sCollisionUnits.setPlayerTwo(&this->playerSprite);
 	}
 
-	ySpeed = 0;
-	xSpeed = 0;
+	this->ySpeed = 0;
+	this->xSpeed = 0;
 
 	facingRight = playerNum;
 
@@ -71,15 +71,10 @@ bool Player::isGrounded(){
 }
 
 // Moves the player rectangle
-void Player::movePlayer(float xSpeed, float ySpeed){
+void Player::movePlayer(){
 	float maxWidth = sCollisionUnits.getWidth();
 	for(int i = 0; i < 5; i++){
-		AnimatedSprite enemy;
-		if(this->playerNum == 0){
-			enemy = *(sCollisionUnits.getPlayerOne());
-		}else{
-			enemy = *(sCollisionUnits.getPlayerTwo());
-		}
+		AnimatedSprite enemy = Player::getEnemy();
 
 		//Player Hitbox
 		float playerLeft = playerSprite.getPosition().x;
@@ -94,26 +89,39 @@ void Player::movePlayer(float xSpeed, float ySpeed){
 		float enemyTop = enemy.getPosition().y;
 		float enemyBottom = enemyTop + 60;
 		
-
-
-
 		if(ySpeed > 0){
 			if(!isGrounded()){
-				if(playerRight < enemyLeft or playerLeft > enemyRight){
+				if(playerRight < 1 + enemyLeft or playerLeft + 1 > enemyRight){
 					this->playerSprite.move(0.f, ySpeed);	
 				}else{
-					if(playerBottom < enemyTop or playerTop > enemyBottom){
+					if(playerBottom < enemyTop){
 						this->playerSprite.move(0.f, ySpeed);	
 					}else{
 						
-						this->playerSprite.move(0.f, -45);	
+						//this->playerSprite.move(0.f, -45);	
+						this->ySpeed = -3.0;
+						Player::movePlayer();
 					}
 				}
 			}
-		
 		}else{
 			//Moves player up (if jumping)
-			this->playerSprite.move(0.f, ySpeed);	
+			if(playerRight > enemyLeft and playerRight < enemyRight or
+			(playerLeft < enemyRight and playerLeft > enemyLeft)){
+				if(playerTop > enemyBottom and playerTop < enemyBottom + 10){
+					//Moves player to side to get around collision
+					float middle = sCollisionUnits.getWidth()/2;
+					if(playerLeft < middle){
+						this->playerSprite.move(15.f, 0.f);	
+					}else{
+						this->playerSprite.move(-15.f, 0.f);	
+					}
+				}else{
+					this->playerSprite.move(0.f, ySpeed);	
+				}
+			}else{
+				this->playerSprite.move(0.f, ySpeed);	
+			}
 		}
 		if(xSpeed > 0){
 			if(this->playerNum == 1){
@@ -153,7 +161,7 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 	if(isGrounded()){
 		//Handles jump
 		if(jump){
-			ySpeed = -6.0;
+			this->ySpeed = -6.0;
 			//Used for selecting animation
 			inAir = true;
 		}
@@ -203,10 +211,18 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 	(this->playerSprite).update(frameTime);
 	
 	//Moves the player
-	Player::movePlayer(xSpeed, ySpeed);
+	Player::movePlayer();
 }
 
 //Returns sprite  (to game for drawing)
 AnimatedSprite Player::getSprite(){
 	return this->playerSprite;	
+}
+
+AnimatedSprite Player::getEnemy(){
+		if(this->playerNum == 0){
+			return *(sCollisionUnits.getPlayerOne());
+		}else{
+			return *(sCollisionUnits.getPlayerTwo());
+		}
 }

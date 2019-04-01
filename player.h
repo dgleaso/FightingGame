@@ -17,12 +17,13 @@ class Player {
 
 	private:
 		AnimatedSprite playerSprite;
+		AnimatedSprite getEnemy();
 		int playerNum;
 		int facingRight;
 		bool isGrounded();
 		float xSpeed;
 		float ySpeed;
-		void movePlayer(float xSpeed, float ySpeed);
+		void movePlayer();
 		//Animations
 		Animation walkLeft;
 		Animation walkRight;

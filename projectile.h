@@ -8,15 +8,24 @@
 
 #include "collisionUnits.h"
 
+
+
 class Projectile {
 	public:
-		Projectile(int playerNum, AnimatedSprite throwSprite, sf::Texture* throwSheet);
+		Projectile(int playerNum, AnimatedSprite throwSprite,
+		sf::Texture* throwSheet, int direction);
 		~Projectile();
-		void update(sf::Time frameTime);
+		void update(sf::Time frameTime, bool hit);
 		void flip();
 		AnimatedSprite getSprite();
+		void setDirection(int direction);
+		void setPosition(float x, float y);
+		int getHasThrown();
+		void setHasThrown(int hT);
 
 	private:
+		int direction;
+		int hasThrown;
 		AnimatedSprite throwSprite;
 		//Animations
 		Animation throwAnimation;

@@ -10,12 +10,18 @@
 
 #include<iostream>
 
-Projectile::Projectile(int playerNum, AnimatedSprite throwSprite, sf::Texture* throwSheet){
+Projectile::Projectile(int playerNum, AnimatedSprite throwSprite, 
+sf::Texture* throwSheet, int direction){
 	this->throwSprite = throwSprite;
 
-	this->throwSprite.setPosition(300, 200);
+	this->throwSprite.setPosition(-100, -100);
 
 	this->playerNum = playerNum;
+
+	this->direction = direction;
+
+
+	this->hasThrown = 0;
 
 
 	this->throwAnimation.setSpriteSheet(*throwSheet);
@@ -23,6 +29,8 @@ Projectile::Projectile(int playerNum, AnimatedSprite throwSprite, sf::Texture* t
 	this->throwAnimation.addFrame(sf::IntRect(0, 25, 20, 20));
 	this->throwAnimation.addFrame(sf::IntRect(0, 45, 20, 20));
 	this->throwAnimation.addFrame(sf::IntRect(0, 65, 20, 20));
+
+
 
 	this->currentAnimation = &throwAnimation;
 
@@ -32,7 +40,20 @@ Projectile::~Projectile(){
 
 }
 
-void Projectile::update(sf::Time frameTime){
+void Projectile::update(sf::Time frameTime, bool hit){
+	if(hit){
+		//std::cout << " test\n";
+		this->direction == 0;
+		this->hasThrown = 0;
+		this->throwSprite.setPosition(-100, -100);
+	}
+
+	//std::cout << this->direction << " test\n";
+	if(this->direction == 1){
+		this->throwSprite.move(10.f, 0.f);
+	}else if (this->direction == 2){
+		this->throwSprite.move(-10.f, 0.f);
+	}
 
 	(this->throwSprite).play(*currentAnimation);
 	(this->throwSprite).update(frameTime);
@@ -46,4 +67,16 @@ AnimatedSprite Projectile::getSprite(){
 
 void Projectile::flip(){
 	this->throwSprite.scale(-1.f, 1.f);
+}
+void Projectile::setDirection(int direction){
+	this->direction = direction;
+}
+void Projectile::setPosition(float x, float y){
+	this->throwSprite.setPosition(x, y);
+}
+int Projectile::getHasThrown(){
+	return this->hasThrown;
+}
+void Projectile::setHasThrown(int hT){
+	this->hasThrown = hT;
 }

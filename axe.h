@@ -10,7 +10,8 @@
 
 class Axe {
 	public:
-		Axe(AnimatedSprite axeSprite, sf::Texture* axeSheet);
+		Axe(int playerNum, AnimatedSprite axeSprite, sf::Texture* axeSheet,
+		int direction);
 		~Axe();
 		void update(sf::Time frameTime);
 		void flip();

@@ -12,18 +12,18 @@
 
 class Player {
 	public:
-		Player(int playerNum, AnimatedSprite playerSprite, 
-		sf::Texture* sheetTexture,
-		sf::Texture* throwTexture);
+		Player(int playerNum, AnimatedSprite playerSprite,
+		sf::Texture* sheetTexture
+		);
 		~Player();
 		void update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump,
-		bool throwB);
+		bool throwB, Projectile* hammer,
+		bool playerHit);
 		AnimatedSprite getSprite();
 
 	private:
-		void createThrow();
 
-		int hasThrown;
+		void throwHammer(Projectile* hammer);
 
 		AnimatedSprite playerSprite;
 		AnimatedSprite getEnemy();

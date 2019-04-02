@@ -16,14 +16,6 @@
 int windowHeight = 480;
 int windowWidth = 640;
 
-
-
-
-//DELETE ONCE IMPLEMENTED PROJECTILE
-//Declares projectile and speed
-//sf::CircleShape shot(5.f);
-//float shotVelocity = 1.f;	
-
 Game::Game(){
 
 }
@@ -34,9 +26,6 @@ Game::~Game(){
 
 
 int Game::Update(){
-
-	float vSpeed = 0;
-	//bool isShot = false;
 
 	//Create window
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Hammer Mercenary!");
@@ -60,31 +49,32 @@ int Game::Update(){
 		return 1;
 	}
 
-	//Creates a projectile and an axe
-	/*
-	AnimatedSprite tSprite(sf::seconds(0.08), true, false);
-	Projectile tProj(tSprite, &throwTexture);
-
-	AnimatedSprite aSprite(sf::seconds(0.4), true, false);
-	Axe axe(tSprite, &axeTexture);
-
-	//tProj.flip();
-
-	*/
-	//done proj/axe
+	//Creates the projectiles
+	AnimatedSprite throwSprite(sf::seconds(0.08), true, false);
+	Projectile throwOne(1, throwSprite, &throwTexture, 0);
+	AnimatedSprite throwSpriteTwo(sf::seconds(0.08), true, false);
+	Projectile throwTwo(1, throwSpriteTwo, &throwTexture, 0);
+	//Creates the axes
+	AnimatedSprite axeSprite(sf::seconds(0.2), true, false);
+	Axe axeOne(1, axeSprite, &axeTexture, 0);
+	AnimatedSprite axeSpriteTwo(sf::seconds(0.2), true, false);
+	Axe axeTwo(1, axeSpriteTwo, &axeTexture, 0);
+	//____________________________________________--
 
 	
 	//Creates Player Object
 	AnimatedSprite playerOneSprite(sf::seconds(0.2), true, false);
+	AnimatedSprite throwOneSprite(sf::seconds(0.2), true, false);
 	sf::Vector2f startingPos(120, 100);
 	playerOneSprite.setPosition(startingPos);
-	Player playerOne(1, playerOneSprite, &sheetTexture, &throwTexture);
+	Player playerOne(1, playerOneSprite, &sheetTexture);
 
 	//Player 2
 	AnimatedSprite playerTwoSprite(sf::seconds(0.2), true, false);
+	AnimatedSprite throwTwoSprite(sf::seconds(0.2), true, false);
 	sf::Vector2f startingPosT(440, 100);
 	playerTwoSprite.setPosition(startingPosT);
-	Player playerTwo(0, playerTwoSprite, &sheetTexture, &throwTexture);
+	Player playerTwo(0, playerTwoSprite, &sheetTexture);
 
 
 
@@ -94,6 +84,8 @@ int Game::Update(){
 	floor.setFillColor(sf::Color::Black);
 
 	sCollisionUnits.setFloor(floor);
+
+
 
 	//Frame limit
 	window.setFramerateLimit(30);
@@ -113,7 +105,14 @@ int Game::Update(){
 		bool oneThrow = false;
 		bool twoThrow = false;
 
+		bool projOneHit = false;
+		bool projTwoHit = false;
+
+		bool playerOneHit = false;
+		bool playerTwoHit = false;
+
 		sf::Time frameTime = frameClock.restart();
+
 
 		//Keyboard input for closing
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
@@ -154,6 +153,8 @@ int Game::Update(){
 			twoThrow = true;
 		}
 
+
+
 		/*
 		//Shoot ball
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
@@ -162,40 +163,92 @@ int Game::Update(){
 			isShot = true;
 		}
 		*/ 
+		//Projectile Colision (only checks if thrown)
+		if(throwOne.getHasThrown() == 1){
+			throwOneSprite	= throwOne.getSprite();
+			float left = throwOneSprite.getPosition().x;
+			float right = left + 20;
+			float top = throwOneSprite.getPosition().y;
+			float bot = top + 20;
 
-		playerOne.update(frameTime, oneMoveRight, oneMoveLeft, oneJump, oneThrow);
-		playerTwo.update(frameTime, twoMoveRight, twoMoveLeft, twoJump, twoThrow);
+			float pLeft = playerTwo.getSprite().getPosition().x;
+			float pRight = pLeft + 33;
+			float pTop = playerTwo.getSprite().getPosition().y;
+			float pBot = pTop + 60;
 
+			if(right > windowWidth or
+			left < 0
+			){
+				projOneHit = true;
+			}
+			if(((top > pTop and top < pBot) or (bot < pBot and bot > pTop)) and
+			((left > pLeft and left < pRight) or (right < pRight and right > pLeft))
+			){
+				projOneHit = true;
+				playerOneHit = true;
+			}
+		}
+		if(throwTwo.getHasThrown() == 1){
+			throwTwoSprite	= throwTwo.getSprite();
+			float left = throwTwoSprite.getPosition().x;
+			float right = left + 20;
+			float top = throwTwoSprite.getPosition().y;
+			float bot = top + 20;
 
-		//Updates throw/axe
-		/*
-		tProj.update(frameTime);
-		axe.update(frameTime);
-		*/
+			float pLeft = playerOne.getSprite().getPosition().x;
+			float pRight = pLeft + 33;
+			float pTop = playerOne.getSprite().getPosition().y;
+			float pBot = pTop + 60;
+
+			if(right > windowWidth or
+			left < 0
+			){
+				projTwoHit = true;
+			}
+			if(((top > pTop and top < pBot) or (bot < pBot and bot > pTop)) and
+			((left > pLeft and left < pRight) or (right < pRight and right > pLeft))
+			){
+				projTwoHit = true;
+				playerTwoHit = true;
+			}
+		}
+		//END OF projectile colision
+
+		playerOne.update(frameTime, oneMoveRight, oneMoveLeft, oneJump, 
+		oneThrow, &throwOne,
+		playerOneHit);
+		playerTwo.update(frameTime, twoMoveRight, twoMoveLeft, twoJump,
+		twoThrow, &throwTwo,
+		playerTwoHit);
+
+		if(throwOne.getHasThrown() == 1){
+			throwOne.update(frameTime, projOneHit);	
+		}
+		if(throwTwo.getHasThrown() == 1){
+			throwTwo.update(frameTime, projTwoHit);	
+		}
+
+		axeOne.update(frameTime);
 
 
 		//Makes background color white
 		sf::Color c(255, 255, 255);
 		window.clear(c);
 		//window.clear();
-		//
-		//std::cout << sCollisionUnits.getPlayerOne() << '\n';
-		//std::cout << sCollisionUnits.getPlayerTwo() << '\n';
+		
+		window.draw(axeOne.getSprite());
 
 		window.draw(playerOne.getSprite());
 		window.draw(playerTwo.getSprite());
-
-		//Draws throw/axe
-		/*
-		window.draw(tProj.getSprite());
-		window.draw(axe.getSprite());
-		*/
-
-		/*
-		if(isShot){
-			window.draw(shot);
+		if(throwOne.getHasThrown() == 1){
+			window.draw(throwOne.getSprite());
 		}
-		*/
+		if(throwTwo.getHasThrown() == 1){
+			window.draw(throwTwo.getSprite());
+		}
+
+
+
 		window.draw(floor);
 		window.display();
 	}

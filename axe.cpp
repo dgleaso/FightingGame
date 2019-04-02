@@ -10,17 +10,17 @@
 
 #include<iostream>
 
-Axe::Axe(AnimatedSprite axeSprite, sf::Texture* axeSheet){
+Axe::Axe(int playerNum, AnimatedSprite axeSprite, sf::Texture* axeSheet, 
+int direction){
 	this->axeSprite = axeSprite;
 
-	this->axeSprite.setPosition(400, 200);
+	this->axeSprite.setPosition(300, 300);
 
 
 	this->axeAnimation.setSpriteSheet(*axeSheet);
 	this->axeAnimation.addFrame(sf::IntRect(0, 3, 35, 35));
 	this->axeAnimation.addFrame(sf::IntRect(0, 38, 35, 35));
 	this->axeAnimation.addFrame(sf::IntRect(0, 73, 35, 35));
-	this->axeAnimation.addFrame(sf::IntRect(0, 108, 35, 35));
 
 	this->currentAnimation = &axeAnimation;
 

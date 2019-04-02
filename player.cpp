@@ -14,13 +14,13 @@
 
 
 //Constr/Destr
-Player::Player(int playerNum, AnimatedSprite playerSprite, 
-sf::Texture* sheetTexture, 
-sf::Texture* throwTexture){
+Player::Player(int playerNum, AnimatedSprite playerSprite,
+sf::Texture* sheetTexture 
+)
+{
 	this->playerSprite = playerSprite;
 	this->playerNum = playerNum;
 
-	this->hasThrown = false;
 	
 	if(playerNum == 1){
 		sCollisionUnits.setPlayerOne(&this->playerSprite);
@@ -111,15 +111,15 @@ void Player::movePlayer(){
 			}
 		}else{
 			//Moves player up (if jumping)
-			if(playerRight > enemyLeft and playerRight < enemyRight or
-			(playerLeft < enemyRight and playerLeft > enemyLeft)){
+			if(playerRight >= enemyLeft and playerRight <= enemyRight or
+			(playerLeft <= enemyRight and playerLeft >= enemyLeft)){
 				if(playerTop > enemyBottom and playerTop < enemyBottom + 10){
 					//Moves player to side to get around collision
 					float middle = sCollisionUnits.getWidth()/2;
 					if(playerLeft < middle){
-						this->playerSprite.move(15.f, 0.f);	
+						this->playerSprite.move(25.f, 0.f);	
 					}else{
-						this->playerSprite.move(-15.f, 0.f);	
+						this->playerSprite.move(-25.f, 0.f);	
 					}
 				}else{
 					this->playerSprite.move(0.f, ySpeed);	
@@ -160,7 +160,9 @@ void Player::movePlayer(){
 //Public
 
 //Updates position and this->currentAnimation based on state
-void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump, bool throwB){
+void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump,
+bool throwB, Projectile* hammer,
+bool playerHit){
 	bool inAir = false;
 	//If on ground
 	if(isGrounded()){
@@ -211,6 +213,14 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 		}
 	}
 
+	if(throwB){
+		//std::cout << this->hasThrown << '\n';	
+		if((*hammer).getHasThrown() == 0){
+			Player::throwHammer(hammer);
+			(*hammer).setHasThrown(1);
+		}
+	}
+
 	//Updates the animation frame
 	(this->playerSprite).play(*currentAnimation);
 	(this->playerSprite).update(frameTime);
@@ -220,7 +230,18 @@ void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump
 }
 
 //Creates a projectile
-void Player::createThrow(){
+void Player::throwHammer(Projectile* hammer){
+	float playerLeft = playerSprite.getPosition().x;
+	float playerRight = playerLeft + 33;
+	float playerTop = playerSprite.getPosition().y;
+	if(facingRight){
+		(*hammer).setDirection(1);
+		(*hammer).setPosition(playerRight, playerTop);
+	}else{
+		(*hammer).setDirection(2);
+		(*hammer).setPosition(playerLeft, playerTop);
+	}
+
 
 }
 

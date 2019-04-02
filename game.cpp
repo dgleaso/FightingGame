@@ -31,6 +31,52 @@ int Game::Update(){
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Hammer Mercenary!");
 	sCollisionUnits.setWidth(windowWidth);
 
+	int pOneHealth = 4;
+	int pTwoHealth = 4;
+
+	//LOGO STUFF
+	sf::Texture logoTexture;
+	if (!logoTexture.loadFromFile("images/HMLogo1.png")) {
+		std::cout << "Failed to load player spritesheet!" << std::endl;
+		return 1;
+	}
+	sf::Sprite logoSprite;
+	logoSprite.setTexture(logoTexture);
+	logoSprite.setPosition(120, 10);
+
+	//HEART ANIMATION STUFF
+	sf::Texture heartTexture;
+	if (!heartTexture.loadFromFile("images/heartSheet.png")) {
+		std::cout << "Failed to load player spritesheet!" << std::endl;
+		return 1;
+	}
+	//Player 1 Hearts
+	AnimatedSprite heartSprite1;
+	heartSprite1.setPosition(10, 10);
+	AnimatedSprite heartSprite2;
+	heartSprite2.setPosition(50, 10);
+	AnimatedSprite heartSprite3;
+	heartSprite3.setPosition(10, 50);
+	AnimatedSprite heartSprite4;
+	heartSprite4.setPosition(50, 50);
+	//Player 2 Hearts
+	AnimatedSprite heartSprite5;
+	heartSprite5.setPosition(520, 10);
+	AnimatedSprite heartSprite6;
+	heartSprite6.setPosition(570, 10);
+	AnimatedSprite heartSprite7;
+	heartSprite7.setPosition(520, 50);
+	AnimatedSprite heartSprite8;
+	heartSprite8.setPosition(570, 50);
+
+	//Heart Animation
+	Animation heartAnimation;
+	heartAnimation.setSpriteSheet(heartTexture);
+	heartAnimation.addFrame(sf::IntRect(0, 0, 35, 40));
+	heartAnimation.addFrame(sf::IntRect(0, 40, 35, 40));
+	heartAnimation.addFrame(sf::IntRect(0, 80, 35, 40));
+	
+
 
 	//ANIMATION TEXTURE STUFF
 	sf::Texture sheetTexture;
@@ -198,6 +244,7 @@ int Game::Update(){
 			){
 				projOneHit = true;
 				playerOneHit = true;
+				pTwoHealth = pTwoHealth - 1;
 			}
 		}
 		if(throwTwo.getHasThrown() == 1){
@@ -222,6 +269,7 @@ int Game::Update(){
 			){
 				projTwoHit = true;
 				playerTwoHit = true;
+				pOneHealth = pOneHealth - 1;
 			}
 		}
 		//END OF projectile colision
@@ -245,7 +293,9 @@ int Game::Update(){
 			if(((top > pTop and top < pBot) or (bot < pBot and bot > pTop)) and
 			((left > pLeft and left < pRight) or (right < pRight and right > pLeft))
 			){
-				std::cout << "test col\n";
+				//std::cout << "test col\n";
+				pTwoHealth = pTwoHealth - 1;
+
 			}
 		}
 		if(axeTwo.getHasAttacked() == 1){
@@ -268,12 +318,32 @@ int Game::Update(){
 			if(((top > pTop and top < pBot) or (bot < pBot and bot > pTop)) and
 			((left > pLeft and left < pRight) or (right < pRight and right > pLeft))
 			){
-				std::cout << "test col 2\n";
+				//std::cout << "test col 2\n";
+				pOneHealth = pOneHealth - 1;
 			}
 		}
 		
 
 		//END of axe colision
+
+
+		//Animated Hearts 
+		heartSprite1.play(heartAnimation);
+		heartSprite1.update(frameTime);
+		heartSprite2.play(heartAnimation);
+		heartSprite2.update(frameTime);
+		heartSprite3.play(heartAnimation);
+		heartSprite3.update(frameTime);
+		heartSprite4.play(heartAnimation);
+		heartSprite4.update(frameTime);
+		heartSprite5.play(heartAnimation);
+		heartSprite5.update(frameTime);
+		heartSprite6.play(heartAnimation);
+		heartSprite6.update(frameTime);
+		heartSprite7.play(heartAnimation);
+		heartSprite7.update(frameTime);
+		heartSprite8.play(heartAnimation);
+		heartSprite8.update(frameTime);
 
 		playerOne.update(frameTime, oneMoveRight, oneMoveLeft, oneJump, 
 		oneThrow, &throwOne,
@@ -304,6 +374,41 @@ int Game::Update(){
 		window.clear(c);
 		//window.clear();
 		
+		//std::cout << pOneHealth << "\n";
+		//Draw heart sprites (p1)
+		if(pOneHealth == 1){
+			window.draw(heartSprite1);
+		}else if(pOneHealth == 2){
+			window.draw(heartSprite1);
+			window.draw(heartSprite2);
+		}else if(pOneHealth == 3){
+			window.draw(heartSprite1);
+			window.draw(heartSprite2);
+			window.draw(heartSprite3);
+		}else if(pOneHealth == 4){
+			window.draw(heartSprite1);
+			window.draw(heartSprite2);
+			window.draw(heartSprite3);
+			window.draw(heartSprite4);
+		}
+		//Draw heart sprites (p2)
+		if(pTwoHealth == 1){
+			window.draw(heartSprite5);
+		}else if(pTwoHealth == 2){
+			window.draw(heartSprite5);
+			window.draw(heartSprite6);
+		}else if(pTwoHealth == 3){
+			window.draw(heartSprite5);
+			window.draw(heartSprite6);
+			window.draw(heartSprite7);
+		}else if(pTwoHealth == 4){
+			window.draw(heartSprite5);
+			window.draw(heartSprite6);
+			window.draw(heartSprite7);
+			window.draw(heartSprite8);
+		}
+
+
 		window.draw(playerOne.getSprite());
 		window.draw(playerTwo.getSprite());
 		if(throwOne.getHasThrown() == 1){
@@ -319,6 +424,7 @@ int Game::Update(){
 			window.draw(axeTwo.getSprite());
 		}
 
+		window.draw(logoSprite);
 
 
 		window.draw(floor);

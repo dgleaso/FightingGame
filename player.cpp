@@ -21,6 +21,7 @@ sf::Texture* sheetTexture
 	this->playerSprite = playerSprite;
 	this->playerNum = playerNum;
 
+
 	
 	if(playerNum == 1){
 		sCollisionUnits.setPlayerOne(&this->playerSprite);
@@ -31,7 +32,13 @@ sf::Texture* sheetTexture
 	this->ySpeed = 0;
 	this->xSpeed = 0;
 
-	facingRight = playerNum;
+	if(playerNum == 1){
+		this->initFlip = 0;
+		facingRight = 1;
+	}else if (playerNum == 0){
+		this->initFlip = 1;
+		facingRight = 0;
+	}
 
 	//ANIMATION TEXTURE STUFF
 	this->walkLeft.setSpriteSheet(*sheetTexture);
@@ -165,78 +172,80 @@ bool throwB, Projectile* hammer,
 bool attackB, Axe* axe,
 bool playerHit){
 	bool inAir = false;
-	//If on ground
-	if(isGrounded()){
-		//Handles jump
-		if(jump){
-			this->ySpeed = -6.0;
+	if((*axe).getHasAttacked() == 0){
+		//If on ground
+		if(isGrounded()){
+			//Handles jump
+			if(jump){
+				this->ySpeed = -6.0;
+				//Used for selecting animation
+				inAir = true;
+			}
+		}else{
+			//In air
+			//Gravity
+			ySpeed += 0.5;
 			//Used for selecting animation
 			inAir = true;
 		}
-	}else{
-		//In air
-		//Gravity
-		ySpeed += 0.5;
-		//Used for selecting animation
-		inAir = true;
-	}
-	//
-	if(moveRight and !moveLeft){
-		facingRight = 1;
-		xSpeed = 1.0; 	
-		if(inAir){
-			this->currentAnimation = &jumpRight;
-		}else{
-			this->currentAnimation = &walkRight;
-		}
-	}else if(moveLeft){
-		facingRight = 0;
-		xSpeed = -1.0; 	
-		if(inAir){
-			this->currentAnimation = &jumpLeft;
-		}else{
-			this->currentAnimation = &walkLeft;
-		}
-	}else{
-		xSpeed = 0;
-		if(facingRight == 1){
+		//
+		if(moveRight and !moveLeft){
+			facingRight = 1;
+			xSpeed = 1.0; 	
 			if(inAir){
 				this->currentAnimation = &jumpRight;
 			}else{
-				this->currentAnimation = &standRight;
+				this->currentAnimation = &walkRight;
 			}
-		}else{
+		}else if(moveLeft){
+			facingRight = 0;
+			xSpeed = -1.0; 	
 			if(inAir){
 				this->currentAnimation = &jumpLeft;
 			}else{
-				this->currentAnimation = &standLeft;
+				this->currentAnimation = &walkLeft;
+			}
+		}else{
+			xSpeed = 0;
+			if(facingRight == 1){
+				if(inAir){
+					this->currentAnimation = &jumpRight;
+				}else{
+					this->currentAnimation = &standRight;
+				}
+			}else{
+				if(inAir){
+					this->currentAnimation = &jumpLeft;
+				}else{
+					this->currentAnimation = &standLeft;
+				}
 			}
 		}
-	}
-
-	//Throws projectile
-	if(throwB){
-		//std::cout << this->hasThrown << '\n';	
-		if((*hammer).getHasThrown() == 0){
-			Player::throwHammer(hammer);
-			(*hammer).setHasThrown(1);
-		}
-	}
-	//Attacks
-	if(attackB){
-		//std::cout << this->hasThrown << '\n';	
-		if((*axe).getHasAttacked() == 0){
-			Player::attack(axe);
-			(*axe).setHasAttacked(1);
-		}
-	}
-
-	//Updates the animation frame
-	(this->playerSprite).play(*currentAnimation);
-	(this->playerSprite).update(frameTime);
 	
-	//Moves the player
-	Player::movePlayer();
+		//Throws projectile
+		if(throwB){
+			//std::cout << this->hasThrown << '\n';	
+			if((*hammer).getHasThrown() == 0){
+				Player::throwHammer(hammer);
+				(*hammer).setHasThrown(1);
+			}
+		}
+		//Attacks
+		if(attackB){
+			//std::cout << this->hasThrown << '\n';	
+			if((*axe).getHasAttacked() == 0){
+				Player::attack(axe);
+				(*axe).setHasAttacked(1);
+			}
+		}
+	
+		//Updates the animation frame
+		(this->playerSprite).play(*currentAnimation);
+		(this->playerSprite).update(frameTime);
+		
+		//Moves the player
+		Player::movePlayer();
+	}
 }
 
 //Creates a projectile
@@ -257,10 +266,20 @@ void Player::attack(Axe* axe){
 	float playerLeft = playerSprite.getPosition().x;
 	float playerRight = playerLeft + 33;
 	float playerTop = playerSprite.getPosition().y;
+	if(this->initFlip == 1){
+		this->initFlip = 0;	
+		(*axe).flip();
+	}
 	if(facingRight){
+		if((*axe).getDirection() == 2){
+			(*axe).flip();
+		}
 		(*axe).setDirection(1);
 		(*axe).setPosition(playerRight, playerTop);
 	}else{
+		if((*axe).getDirection() == 1){
+			(*axe).flip();
+		}
 		(*axe).setDirection(2);
 		(*axe).setPosition(playerLeft, playerTop);
 	}
@@ -277,4 +296,7 @@ AnimatedSprite Player::getEnemy(){
 		}else{
 			return *(sCollisionUnits.getPlayerTwo());
 		}
+}
+int Player::getFacing(){
+	return this->facingRight;
 }

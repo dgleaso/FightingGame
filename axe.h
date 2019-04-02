@@ -18,16 +18,21 @@ class Axe {
 		AnimatedSprite getSprite();
 
 		void setDirection(int direction);
+		int getDirection();
 		void setPosition(float x, float y);
 		int getHasAttacked();
 		void setHasAttacked(int hA);
 
 	private:
+		sf::Clock animationClock;
+		sf::Time* timePoint;
 		int direction;
 		int hasAttacked;
 		AnimatedSprite axeSprite;
+
 		//Animations
 		Animation axeAnimation;
+		Animation temp;
 
 		Animation* currentAnimation;
 };

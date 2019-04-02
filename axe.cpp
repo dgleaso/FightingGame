@@ -11,7 +11,8 @@
 #include<iostream>
 
 Axe::Axe(int playerNum, AnimatedSprite axeSprite, sf::Texture* axeSheet, 
-int direction){
+int direction)
+{
 	this->axeSprite = axeSprite;
 
 	this->axeSprite.setPosition(-300, -300);
@@ -25,6 +26,11 @@ int direction){
 	this->axeAnimation.addFrame(sf::IntRect(0, 38, 35, 35));
 	this->axeAnimation.addFrame(sf::IntRect(0, 73, 35, 35));
 
+
+	this->temp.setSpriteSheet(*axeSheet);
+	this->temp.addFrame(sf::IntRect(0, 3, 35, 35));
+
+
 	this->currentAnimation = &axeAnimation;
 
 }
@@ -34,7 +40,14 @@ Axe::~Axe(){
 }
 
 void Axe::update(sf::Time frameTime){
+	sf::Time finish = sf::seconds(0.5);
+	if(animationClock.getElapsedTime() >= finish){
+		this->currentAnimation = &temp;
+		this->hasAttacked = 0;
+		Axe::setPosition(-300, -300);
+	}
 
+		
 	(this->axeSprite).play(*currentAnimation);
 	(this->axeSprite).update(frameTime);
 
@@ -48,6 +61,9 @@ AnimatedSprite Axe::getSprite(){
 void Axe::flip(){
 	this->axeSprite.scale(-1.f, 1.f);
 }
+int Axe::getDirection(){
+	return this->direction;
+}
 void Axe::setDirection(int direction){
 	this->direction = direction;
 }
@@ -58,5 +74,9 @@ int Axe::getHasAttacked(){
 	return this->hasAttacked;
 }
 void Axe::setHasAttacked(int hA){
+	if(hA == 1){
+		animationClock.restart();	
+		this->currentAnimation = &axeAnimation;
+	}
 	this->hasAttacked = hA;
 }

@@ -21,11 +21,13 @@ class Player {
 		bool attackB, Axe* axe,
 		bool playerHit);
 		AnimatedSprite getSprite();
+		int getFacing();
 
 	private:
 
 		void throwHammer(Projectile* hammer);
 		void attack(Axe* axe);
+		int initFlip;
 
 		AnimatedSprite playerSprite;
 		AnimatedSprite getEnemy();

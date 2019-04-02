@@ -48,6 +48,7 @@ int Game::Update(){
 		std::cout << "Failed to load player spritesheet!" << std::endl;
 		return 1;
 	}
+	//std::cout << "tes1t\n";
 
 	//Creates the projectiles
 	AnimatedSprite throwSprite(sf::seconds(0.08), true, false);
@@ -56,9 +57,10 @@ int Game::Update(){
 	Projectile throwTwo(0, throwSpriteTwo, &throwTexture, 0);
 	//Creates the axes
 	AnimatedSprite axeSprite(sf::seconds(0.2), true, false);
-	Axe axeOne(1, axeSprite, &axeTexture, 0);
+	Axe axeOne(1, axeSprite, &axeTexture, 1);
 	AnimatedSprite axeSpriteTwo(sf::seconds(0.2), true, false);
-	Axe axeTwo(1, axeSpriteTwo, &axeTexture, 0);
+	Axe axeTwo(2, axeSpriteTwo, &axeTexture, 2);
+
 	//____________________________________________--
 
 	
@@ -92,6 +94,7 @@ int Game::Update(){
 
 	//Frameclock to be used for animations (in player update)
 	sf::Clock frameClock;
+
 
 	while (window.isOpen()) {
 		//To be used for player movement (in player update)
@@ -222,6 +225,55 @@ int Game::Update(){
 			}
 		}
 		//END OF projectile colision
+		//Axe (melee) colision
+		if(axeOne.getHasAttacked() == 1){
+			axeSprite = axeOne.getSprite();
+			float left = axeSprite.getPosition().x;
+			//Accounts for flipped axe sprite
+			if(playerOne.getFacing() == 0){
+				left = left - 35;	
+			}
+			float right = left + 20;
+			float top = axeSprite.getPosition().y;
+			float bot = top + 20;
+
+			float pLeft = playerTwo.getSprite().getPosition().x;
+			float pRight = pLeft + 33;
+			float pTop = playerTwo.getSprite().getPosition().y;
+			float pBot = pTop + 60;
+
+			if(((top > pTop and top < pBot) or (bot < pBot and bot > pTop)) and
+			((left > pLeft and left < pRight) or (right < pRight and right > pLeft))
+			){
+				std::cout << "test col\n";
+			}
+		}
+		if(axeTwo.getHasAttacked() == 1){
+			axeSpriteTwo = axeTwo.getSprite();
+			float left = axeSpriteTwo.getPosition().x;
+			//Accounts for flipped axe sprite
+			if(playerTwo.getFacing() == 0){
+				left = left - 35;	
+			}
+			float right = left + 20;
+			float top = axeSpriteTwo.getPosition().y;
+			float bot = top + 20;
+
+
+			float pLeft = playerOne.getSprite().getPosition().x;
+			float pRight = pLeft + 33;
+			float pTop = playerOne.getSprite().getPosition().y;
+			float pBot = pTop + 60;
+
+			if(((top > pTop and top < pBot) or (bot < pBot and bot > pTop)) and
+			((left > pLeft and left < pRight) or (right < pRight and right > pLeft))
+			){
+				std::cout << "test col 2\n";
+			}
+		}
+		
+
+		//END of axe colision
 
 		playerOne.update(frameTime, oneMoveRight, oneMoveLeft, oneJump, 
 		oneThrow, &throwOne,
@@ -252,8 +304,6 @@ int Game::Update(){
 		window.clear(c);
 		//window.clear();
 		
-		window.draw(axeOne.getSprite());
-
 		window.draw(playerOne.getSprite());
 		window.draw(playerTwo.getSprite());
 		if(throwOne.getHasThrown() == 1){

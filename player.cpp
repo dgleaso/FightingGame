@@ -5,6 +5,7 @@
 #include "axe.h"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 
@@ -234,6 +235,7 @@ bool playerHit){
 		if(attackB){
 			//std::cout << this->hasThrown << '\n';	
 			if((*axe).getHasAttacked() == 0){
+				(*axe).setDamageable(1);
 				Player::attack(axe);
 				(*axe).setHasAttacked(1);
 			}

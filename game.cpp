@@ -5,6 +5,7 @@
 #include "axe.h"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 
@@ -33,6 +34,34 @@ int Game::Update(){
 
 	int pOneHealth = 4;
 	int pTwoHealth = 4;
+
+	//Prepares the sounds
+	sf::SoundBuffer gongBuffer;
+	if(!gongBuffer.loadFromFile("sounds/gong.wav")){
+		std::cout << "Failed to load audio" << std::endl;
+		return 1;
+	}
+	sf::Sound gong;
+	gong.setBuffer(gongBuffer);
+
+	sf::SoundBuffer hammerBuffer;
+	if(!hammerBuffer.loadFromFile("sounds/hammer.wav")){
+		std::cout << "Failed to load audio" << std::endl;
+		return 1;
+	}
+	sf::Sound hammerSound;
+	hammerSound.setBuffer(hammerBuffer);
+	
+	sf::SoundBuffer cheerBuffer;
+	if(!cheerBuffer.loadFromFile("sounds/cheer.wav")){
+		std::cout << "Failed to load audio" << std::endl;
+		return 1;
+	}
+	sf::Sound cheerSound;
+	cheerSound.setBuffer(cheerBuffer);
+
+	gong.play();
+
 
 	//LOGO STUFF
 	sf::Texture logoTexture;
@@ -141,6 +170,8 @@ int Game::Update(){
 	//Frameclock to be used for animations (in player update)
 	sf::Clock frameClock;
 
+	int oneCD = 20;
+	int twoCD = 20;
 
 	while (window.isOpen()) {
 		//To be used for player movement (in player update)
@@ -157,6 +188,9 @@ int Game::Update(){
 		bool oneAttack = false;
 		bool twoAttack = false;
 
+		bool attackOneHit = false;
+		bool attackTwoHit = false;
+
 		bool projOneHit = false;
 		bool projTwoHit = false;
 
@@ -164,7 +198,6 @@ int Game::Update(){
 		bool playerTwoHit = false;
 
 		sf::Time frameTime = frameClock.restart();
-
 
 		//Keyboard input for closing
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
@@ -189,7 +222,10 @@ int Game::Update(){
 			oneJump = true;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
-			oneThrow = true;
+			if(oneCD == 20){
+				oneThrow = true;
+				oneCD = 0;
+			}
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
 			oneAttack = true;
@@ -205,7 +241,10 @@ int Game::Update(){
 			twoJump = true;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) {
-			twoThrow = true;
+			if(twoCD == 20){
+				twoThrow = true;
+				twoCD = 0;
+			}
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) {
 			twoAttack = true;
@@ -245,6 +284,7 @@ int Game::Update(){
 				projOneHit = true;
 				playerOneHit = true;
 				pTwoHealth = pTwoHealth - 1;
+				hammerSound.play();
 			}
 		}
 		if(throwTwo.getHasThrown() == 1){
@@ -270,6 +310,7 @@ int Game::Update(){
 				projTwoHit = true;
 				playerTwoHit = true;
 				pOneHealth = pOneHealth - 1;
+				hammerSound.play();
 			}
 		}
 		//END OF projectile colision
@@ -294,7 +335,12 @@ int Game::Update(){
 			((left > pLeft and left < pRight) or (right < pRight and right > pLeft))
 			){
 				//std::cout << "test col\n";
-				pTwoHealth = pTwoHealth - 1;
+				if(axeOne.getDamageable()){
+					pTwoHealth = pTwoHealth - 1;
+					axeOne.setDamageable(0);
+					hammerSound.play();
+				}
+				attackOneHit = true;
 
 			}
 		}
@@ -319,11 +365,14 @@ int Game::Update(){
 			((left > pLeft and left < pRight) or (right < pRight and right > pLeft))
 			){
 				//std::cout << "test col 2\n";
-				pOneHealth = pOneHealth - 1;
+				attackTwoHit = true;
+				if(axeTwo.getDamageable()){
+					pOneHealth = pOneHealth - 1;
+					axeTwo.setDamageable(0);
+					hammerSound.play();
+				}
 			}
 		}
-		
-
 		//END of axe colision
 
 
@@ -362,10 +411,10 @@ int Game::Update(){
 		}
 
 		if(axeOne.getHasAttacked() == 1){
-			axeOne.update(frameTime);
+			axeOne.update(frameTime, attackOneHit);
 		}
 		if(axeTwo.getHasAttacked() == 1){
-			axeTwo.update(frameTime);
+			axeTwo.update(frameTime, attackTwoHit);
 		}
 
 
@@ -408,6 +457,13 @@ int Game::Update(){
 			window.draw(heartSprite8);
 		}
 
+		//Cooldowns
+		if(oneCD < 20){
+			oneCD = oneCD + 1;	
+		}
+		if(twoCD < 20){
+			twoCD = twoCD + 1;	
+		}
 
 		window.draw(playerOne.getSprite());
 		window.draw(playerTwo.getSprite());

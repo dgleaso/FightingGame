@@ -1,6 +1,7 @@
 #ifndef AXE_H
 #define AXE_H
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 
@@ -13,9 +14,14 @@ class Axe {
 		Axe(int playerNum, AnimatedSprite axeSprite, sf::Texture* axeSheet,
 		int direction);
 		~Axe();
-		void update(sf::Time frameTime);
+		void update(sf::Time frameTime, bool hit);
 		void flip();
 		AnimatedSprite getSprite();
+
+		int damageable;
+
+		int getDamageable();
+		void setDamageable(int d);
 
 		void setDirection(int direction);
 		int getDirection();

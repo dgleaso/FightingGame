@@ -3,6 +3,7 @@
 #include "collisionUnits.h"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 
@@ -19,6 +20,8 @@ int direction)
 
 	this->direction = direction;
 	this->hasAttacked = 0;
+
+	this->damageable = 0;
 
 
 	this->axeAnimation.setSpriteSheet(*axeSheet);
@@ -39,15 +42,15 @@ Axe::~Axe(){
 
 }
 
-void Axe::update(sf::Time frameTime){
+void Axe::update(sf::Time frameTime, bool hit){
 	sf::Time finish = sf::seconds(0.5);
 	if(animationClock.getElapsedTime() >= finish){
+		this->damageable = 1;
 		this->currentAnimation = &temp;
 		this->hasAttacked = 0;
 		Axe::setPosition(-300, -300);
 	}
 
-		
 	(this->axeSprite).play(*currentAnimation);
 	(this->axeSprite).update(frameTime);
 
@@ -79,4 +82,10 @@ void Axe::setHasAttacked(int hA){
 		this->currentAnimation = &axeAnimation;
 	}
 	this->hasAttacked = hA;
+}
+int Axe::getDamageable(){
+	return this->damageable;
+}
+void Axe::setDamageable(int d){
+	this->damageable = d;
 }

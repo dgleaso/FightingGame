@@ -16,6 +16,7 @@ sf::Texture* throwSheet, int direction){
 
 	this->throwSprite.setPosition(-100, -100);
 
+
 	this->playerNum = playerNum;
 
 	this->direction = direction;
@@ -42,13 +43,11 @@ Projectile::~Projectile(){
 
 void Projectile::update(sf::Time frameTime, bool hit){
 	if(hit){
-		//std::cout << " test\n";
 		this->direction == 0;
 		this->hasThrown = 0;
 		this->throwSprite.setPosition(-100, -100);
 	}
 
-	//std::cout << this->direction << " test\n";
 	if(this->direction == 1){
 		this->throwSprite.move(10.f, 0.f);
 	}else if (this->direction == 2){

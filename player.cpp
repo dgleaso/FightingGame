@@ -162,6 +162,7 @@ void Player::movePlayer(){
 //Updates position and this->currentAnimation based on state
 void Player::update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump,
 bool throwB, Projectile* hammer,
+bool attackB, Axe* axe,
 bool playerHit){
 	bool inAir = false;
 	//If on ground
@@ -213,11 +214,20 @@ bool playerHit){
 		}
 	}
 
+	//Throws projectile
 	if(throwB){
 		//std::cout << this->hasThrown << '\n';	
 		if((*hammer).getHasThrown() == 0){
 			Player::throwHammer(hammer);
 			(*hammer).setHasThrown(1);
+		}
+	}
+	//Attacks
+	if(attackB){
+		//std::cout << this->hasThrown << '\n';	
+		if((*axe).getHasAttacked() == 0){
+			Player::attack(axe);
+			(*axe).setHasAttacked(1);
 		}
 	}
 
@@ -241,8 +251,19 @@ void Player::throwHammer(Projectile* hammer){
 		(*hammer).setDirection(2);
 		(*hammer).setPosition(playerLeft, playerTop);
 	}
-
-
+}
+//Creates an attack
+void Player::attack(Axe* axe){
+	float playerLeft = playerSprite.getPosition().x;
+	float playerRight = playerLeft + 33;
+	float playerTop = playerSprite.getPosition().y;
+	if(facingRight){
+		(*axe).setDirection(1);
+		(*axe).setPosition(playerRight, playerTop);
+	}else{
+		(*axe).setDirection(2);
+		(*axe).setPosition(playerLeft, playerTop);
+	}
 }
 
 //Returns sprite  (to game for drawing)

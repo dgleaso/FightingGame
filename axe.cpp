@@ -14,7 +14,10 @@ Axe::Axe(int playerNum, AnimatedSprite axeSprite, sf::Texture* axeSheet,
 int direction){
 	this->axeSprite = axeSprite;
 
-	this->axeSprite.setPosition(300, 300);
+	this->axeSprite.setPosition(-300, -300);
+
+	this->direction = direction;
+	this->hasAttacked = 0;
 
 
 	this->axeAnimation.setSpriteSheet(*axeSheet);
@@ -44,4 +47,16 @@ AnimatedSprite Axe::getSprite(){
 
 void Axe::flip(){
 	this->axeSprite.scale(-1.f, 1.f);
+}
+void Axe::setDirection(int direction){
+	this->direction = direction;
+}
+void Axe::setPosition(float x, float y){
+	this->axeSprite.setPosition(x, y);
+}
+int Axe::getHasAttacked(){
+	return this->hasAttacked;
+}
+void Axe::setHasAttacked(int hA){
+	this->hasAttacked = hA;
 }

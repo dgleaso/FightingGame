@@ -17,7 +17,14 @@ class Axe {
 		void flip();
 		AnimatedSprite getSprite();
 
+		void setDirection(int direction);
+		void setPosition(float x, float y);
+		int getHasAttacked();
+		void setHasAttacked(int hA);
+
 	private:
+		int direction;
+		int hasAttacked;
 		AnimatedSprite axeSprite;
 		//Animations
 		Animation axeAnimation;

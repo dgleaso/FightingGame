@@ -18,12 +18,14 @@ class Player {
 		~Player();
 		void update(sf::Time frameTime, bool moveRight, bool moveLeft, bool jump,
 		bool throwB, Projectile* hammer,
+		bool attackB, Axe* axe,
 		bool playerHit);
 		AnimatedSprite getSprite();
 
 	private:
 
 		void throwHammer(Projectile* hammer);
+		void attack(Axe* axe);
 
 		AnimatedSprite playerSprite;
 		AnimatedSprite getEnemy();

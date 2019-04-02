@@ -53,7 +53,7 @@ int Game::Update(){
 	AnimatedSprite throwSprite(sf::seconds(0.08), true, false);
 	Projectile throwOne(1, throwSprite, &throwTexture, 0);
 	AnimatedSprite throwSpriteTwo(sf::seconds(0.08), true, false);
-	Projectile throwTwo(1, throwSpriteTwo, &throwTexture, 0);
+	Projectile throwTwo(0, throwSpriteTwo, &throwTexture, 0);
 	//Creates the axes
 	AnimatedSprite axeSprite(sf::seconds(0.2), true, false);
 	Axe axeOne(1, axeSprite, &axeTexture, 0);
@@ -105,6 +105,9 @@ int Game::Update(){
 		bool oneThrow = false;
 		bool twoThrow = false;
 
+		bool oneAttack = false;
+		bool twoAttack = false;
+
 		bool projOneHit = false;
 		bool projTwoHit = false;
 
@@ -139,6 +142,9 @@ int Game::Update(){
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
 			oneThrow = true;
 		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+			oneAttack = true;
+		}
 		//Player Two Controls
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 			twoMoveRight= true;
@@ -151,6 +157,9 @@ int Game::Update(){
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) {
 			twoThrow = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) {
+			twoAttack = true;
 		}
 
 
@@ -216,9 +225,11 @@ int Game::Update(){
 
 		playerOne.update(frameTime, oneMoveRight, oneMoveLeft, oneJump, 
 		oneThrow, &throwOne,
+		oneAttack, &axeOne,
 		playerOneHit);
 		playerTwo.update(frameTime, twoMoveRight, twoMoveLeft, twoJump,
 		twoThrow, &throwTwo,
+		twoAttack, &axeTwo,
 		playerTwoHit);
 
 		if(throwOne.getHasThrown() == 1){
@@ -228,7 +239,12 @@ int Game::Update(){
 			throwTwo.update(frameTime, projTwoHit);	
 		}
 
-		axeOne.update(frameTime);
+		if(axeOne.getHasAttacked() == 1){
+			axeOne.update(frameTime);
+		}
+		if(axeTwo.getHasAttacked() == 1){
+			axeTwo.update(frameTime);
+		}
 
 
 		//Makes background color white
@@ -245,6 +261,12 @@ int Game::Update(){
 		}
 		if(throwTwo.getHasThrown() == 1){
 			window.draw(throwTwo.getSprite());
+		}
+		if(axeOne.getHasAttacked() == 1){
+			window.draw(axeOne.getSprite());
+		}
+		if(axeTwo.getHasAttacked() == 1){
+			window.draw(axeTwo.getSprite());
 		}
 
 

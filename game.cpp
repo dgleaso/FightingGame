@@ -32,6 +32,7 @@ int Game::Update(){
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Hammer Mercenary!");
 	sCollisionUnits.setWidth(windowWidth);
 
+
 	int pOneHealth = 4;
 	int pTwoHealth = 4;
 
@@ -52,13 +53,6 @@ int Game::Update(){
 	sf::Sound hammerSound;
 	hammerSound.setBuffer(hammerBuffer);
 	
-	sf::SoundBuffer cheerBuffer;
-	if(!cheerBuffer.loadFromFile("sounds/cheer.wav")){
-		std::cout << "Failed to load audio" << std::endl;
-		return 1;
-	}
-	sf::Sound cheerSound;
-	cheerSound.setBuffer(cheerBuffer);
 
 	gong.play();
 
@@ -72,6 +66,26 @@ int Game::Update(){
 	sf::Sprite logoSprite;
 	logoSprite.setTexture(logoTexture);
 	logoSprite.setPosition(120, 10);
+
+
+	//VICTORY STUFF
+	sf::Texture oneVicTexture;
+	if (!oneVicTexture.loadFromFile("images/pOneVic.png")) {
+		std::cout << "Failed to load player spritesheet!" << std::endl;
+		return 1;
+	}
+	sf::Sprite oneVicSprite;
+	oneVicSprite.setTexture(oneVicTexture);
+	oneVicSprite.setPosition(135, 10);
+
+	sf::Texture twoVicTexture;
+	if (!twoVicTexture.loadFromFile("images/pTwoVic.png")) {
+		std::cout << "Failed to load player spritesheet!" << std::endl;
+		return 1;
+	}
+	sf::Sprite twoVicSprite;
+	twoVicSprite.setTexture(twoVicTexture);
+	twoVicSprite.setPosition(135, 10);
 
 	//HEART ANIMATION STUFF
 	sf::Texture heartTexture;
@@ -423,39 +437,6 @@ int Game::Update(){
 		window.clear(c);
 		//window.clear();
 		
-		//std::cout << pOneHealth << "\n";
-		//Draw heart sprites (p1)
-		if(pOneHealth == 1){
-			window.draw(heartSprite1);
-		}else if(pOneHealth == 2){
-			window.draw(heartSprite1);
-			window.draw(heartSprite2);
-		}else if(pOneHealth == 3){
-			window.draw(heartSprite1);
-			window.draw(heartSprite2);
-			window.draw(heartSprite3);
-		}else if(pOneHealth == 4){
-			window.draw(heartSprite1);
-			window.draw(heartSprite2);
-			window.draw(heartSprite3);
-			window.draw(heartSprite4);
-		}
-		//Draw heart sprites (p2)
-		if(pTwoHealth == 1){
-			window.draw(heartSprite5);
-		}else if(pTwoHealth == 2){
-			window.draw(heartSprite5);
-			window.draw(heartSprite6);
-		}else if(pTwoHealth == 3){
-			window.draw(heartSprite5);
-			window.draw(heartSprite6);
-			window.draw(heartSprite7);
-		}else if(pTwoHealth == 4){
-			window.draw(heartSprite5);
-			window.draw(heartSprite6);
-			window.draw(heartSprite7);
-			window.draw(heartSprite8);
-		}
 
 		//Cooldowns
 		if(oneCD < 20){
@@ -465,26 +446,79 @@ int Game::Update(){
 			twoCD = twoCD + 1;	
 		}
 
-		window.draw(playerOne.getSprite());
-		window.draw(playerTwo.getSprite());
-		if(throwOne.getHasThrown() == 1){
-			window.draw(throwOne.getSprite());
-		}
-		if(throwTwo.getHasThrown() == 1){
-			window.draw(throwTwo.getSprite());
-		}
-		if(axeOne.getHasAttacked() == 1){
-			window.draw(axeOne.getSprite());
-		}
-		if(axeTwo.getHasAttacked() == 1){
-			window.draw(axeTwo.getSprite());
-		}
+		if(pOneHealth < 1){
+			window.draw(twoVicSprite);
+		}else if(pTwoHealth < 1){
+			window.draw(oneVicSprite);
+		}else{
+			//Draw heart sprites (p1)
+			if(pOneHealth == 1){
+				window.draw(heartSprite1);
+			}else if(pOneHealth == 2){
+				window.draw(heartSprite1);
+				window.draw(heartSprite2);
+			}else if(pOneHealth == 3){
+				window.draw(heartSprite1);
+				window.draw(heartSprite2);
+				window.draw(heartSprite3);
+			}else if(pOneHealth == 4){
+				window.draw(heartSprite1);
+				window.draw(heartSprite2);
+				window.draw(heartSprite3);
+				window.draw(heartSprite4);
+			}
+			//Draw heart sprites (p2)
+			if(pTwoHealth == 1){
+				window.draw(heartSprite5);
+			}else if(pTwoHealth == 2){
+				window.draw(heartSprite5);
+				window.draw(heartSprite6);
+			}else if(pTwoHealth == 3){
+				window.draw(heartSprite5);
+				window.draw(heartSprite6);
+				window.draw(heartSprite7);
+			}else if(pTwoHealth == 4){
+				window.draw(heartSprite5);
+				window.draw(heartSprite6);
+				window.draw(heartSprite7);
+				window.draw(heartSprite8);
+			}
+		
+			window.draw(playerOne.getSprite());
+			window.draw(playerTwo.getSprite());
+			if(throwOne.getHasThrown() == 1){
+				window.draw(throwOne.getSprite());
+			}
+			if(throwTwo.getHasThrown() == 1){
+				window.draw(throwTwo.getSprite());
+			}
+			if(axeOne.getHasAttacked() == 1){
+				window.draw(axeOne.getSprite());
+			}
+			if(axeTwo.getHasAttacked() == 1){
+				window.draw(axeTwo.getSprite());
+			}
+	
+			window.draw(logoSprite);
 
-		window.draw(logoSprite);
-
-
-		window.draw(floor);
+	
+			window.draw(floor);
+		}
 		window.display();
+		if(pOneHealth < 1 or pTwoHealth < 1){
+			sf::SoundBuffer cheerBuffer;
+			if(!cheerBuffer.loadFromFile("sounds/cheer.wav")){
+				std::cout << "Failed to load audio" << std::endl;
+				return 1;
+			}
+			sf::Sound cheerSound;
+			cheerSound.setBuffer(cheerBuffer);
+			cheerSound.play();
+			while(!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+			}
+			window.close();
+		}
+
 	}
 
 	return 0;
